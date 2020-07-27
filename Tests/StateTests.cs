@@ -1,4 +1,4 @@
-﻿using Moq;
+using Moq;
 using System;
 using Xunit;
 
@@ -397,7 +397,7 @@ namespace RSG.FluentStateMachineTests
             rootState.AddChild(mockState.Object, "foo");
             rootState.AddChild(topState, "bar");
 
-            rootState.ChangeState("foo");
+            rootState.PushState("foo");
             rootState.PushState("bar");
 
             rootState.TriggerEvent("someEvent");
@@ -406,10 +406,11 @@ namespace RSG.FluentStateMachineTests
         }
 
         [Fact]
-        public void events_are_only_triggered_on_active_child()
+        public void events_are_consumed_by_active_child_with_handler()
         {
             var rootState = CreateTestState();
             var childState = CreateTestState();
+            var noHandlerState = CreateTestState();
 
             var rootStateCalls = 0;
             var childStateCalls = 0;
@@ -419,6 +420,9 @@ namespace RSG.FluentStateMachineTests
 
             rootState.AddChild(childState, "child state");
             rootState.PushState("child state");
+
+            childState.AddChild(noHandlerState, "no handler");
+            childState.PushState("no handler");
 
             rootState.TriggerEvent("foo");
 

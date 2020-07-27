@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace RSG
@@ -48,7 +48,7 @@ namespace RSG
         /// Trigger an event on this state or one of its children.
         /// </summary>
         /// <param name="name">Name of the event to trigger</param>
-        void TriggerEvent(string name);
+        bool TriggerEvent(string name);
 
         /// <summary>
         /// Triggered when and event occurs. Executes the event's action if the 
@@ -57,7 +57,7 @@ namespace RSG
         /// </summary>
         /// <param name="name">Name of the event to trigger</param>
         /// <param name="eventArgs">Arguments to send to the event</param>
-        void TriggerEvent(string name, EventArgs eventArgs);
+        bool TriggerEvent(string name, EventArgs eventArgs);
     }
 
     /// <summary>
@@ -326,9 +326,9 @@ namespace RSG
         /// the next state down.
         /// </summary>
         /// <param name="name">Name of the event to trigger</param>
-        public void TriggerEvent(string name)
+        public bool TriggerEvent(string name)
         {
-            TriggerEvent(name, EventArgs.Empty);
+            return TriggerEvent(name, EventArgs.Empty);
         }
 
         /// <summary>
@@ -338,20 +338,21 @@ namespace RSG
         /// </summary>
         /// <param name="name">Name of the event to trigger</param>
         /// <param name="eventArgs">Arguments to send to the event</param>
-        public void TriggerEvent(string name, EventArgs eventArgs)
+        public bool TriggerEvent(string name, EventArgs eventArgs)
         {
             // Only update the child at the end of the tree
-            if (activeChildren.Count > 0)
+            if (activeChildren.Count > 0 && activeChildren.Peek().TriggerEvent(name, eventArgs))
             {
-                activeChildren.Peek().TriggerEvent(name, eventArgs);
-                return;
+                return true;
             }
 
             Action<EventArgs> myEvent;
             if (events.TryGetValue(name, out myEvent))
             {
                 myEvent(eventArgs);
+                return true;
             }
+            return false;
         }
     }
 
