@@ -159,7 +159,7 @@ namespace RSG
         /// <summary>
         /// Update this state and its children with a specified delta time.
         /// </summary>
-        public void Update(float deltaTime)
+        public virtual void Update(float deltaTime)
         {
             // Only update the child at the end of the tree
             if (activeChildren.Count > 0)
@@ -296,7 +296,7 @@ namespace RSG
         /// <summary>
         /// Triggered when we enter the state.
         /// </summary>
-        public void Enter()
+        public virtual void Enter()
         {
             if (onEnter != null)
             {
@@ -307,7 +307,7 @@ namespace RSG
         /// <summary>
         /// Triggered when we exit the state.
         /// </summary>
-        public void Exit()
+        public virtual void Exit()
         {
             if (onExit != null)
             {
